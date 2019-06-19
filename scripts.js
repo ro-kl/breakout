@@ -10,7 +10,7 @@ let dy = -1;
 let dx = 1;
 
 let barHeight = 10;
-let barWidth = 80;
+let barWidth = 100;
 let barX = (playBox.width - barWidth) / 2;
 
 let rightKeyPressed = false;
@@ -44,24 +44,33 @@ function draw() {
     if (x + dx > playBox.width - radius || x + dx < radius) {
         dx = -dx;
     }
-    if (y + dy > playBox.height - radius || y + dy < radius) {
+    if (y + dy < radius) {
         dy = -dy;
+    } else if (y + dy > playBox.height - radius) {
+
+        if (x > barX && x < barX + barWidth) {
+            dy = -dy;
+        } else {
+            endGame();
+        }
     }
+
     x += dx;
     y += dy;
 
-    if(rightKeyPressed) {
+    if (rightKeyPressed && barX < playBox.width - barWidth) {
         barX += 10;
     }
-    if(leftKeyPressed) {
+
+    if (leftKeyPressed && barX > 0) {
         barX -= 10;
     }
 }
 
-document.addEventListener("keydown", keyPressHandler, false);
+document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-function keyPressHandler(e) {
+function keyDownHandler(e) {
     if (e.key == "Right" || e.key == "ArrowRight") {
         rightKeyPressed = true;
     } else if (e.key == "Left" || e.key == "ArrowLeft") {
@@ -77,5 +86,11 @@ function keyUpHandler(e) {
     }
 }
 
-setInterval(draw, 10);
+let drawInterval = setInterval(draw, 10);
 setInterval(speedUp, 5000);
+
+function endGame() {
+    alert("GAME OVER");
+    document.location.reload();
+    clearInterval(drawInterval);
+}
