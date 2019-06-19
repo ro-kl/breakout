@@ -9,8 +9,8 @@ let radius = 10;
 let dy = -1;
 let dx = 1;
 
-let barHeight = 10;
-let barWidth = 100;
+let barHeight = 15;
+let barWidth = 120;
 let barX = (playBox.width - barWidth) / 2;
 
 let rightKeyPressed = false;
@@ -19,7 +19,7 @@ let leftKeyPressed = false;
 function ball() {
     context.beginPath();
     context.arc(x, y, 10, 0, Math.PI * 2);
-    context.fillStyle = "red";
+    context.fillStyle = "#163D35";
     context.fill();
     context.closePath();
 }
@@ -32,7 +32,7 @@ function speedUp() {
 function bar() {
     context.beginPath();
     context.rect(barX, playBox.height - barHeight, barWidth, barHeight);
-    context.fillStyle = 'blue';
+    context.fillStyle = '#163D35';
     context.fill();
     context.closePath();
 }
