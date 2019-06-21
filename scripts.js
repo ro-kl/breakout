@@ -128,11 +128,9 @@ function keyUpHandler(e) {
 }
 
 function detectCollision() {
-    console.log('#');
     for (let i = 0; i < BRICK_COLS; i++) {
         for (let j = 0; j < BRICK_ROWS; j++) {
             let b = bricks[i][j];
-            console.log(b);
             if (b.hit == 0) {
                 if (x > b.x && x < b.x + BRICK_WIDTH && y > b.y && y < b.y + BRICK_HEIGHT) {
                     dy = -dy
