@@ -4,14 +4,14 @@ let context = playBox.getContext("2d");
 let x = playBox.width / 2;
 let y = playBox.height - 30;
 
-let radius = 10;
+const RADIUS = 10;
 
 let dy = -1;
 let dx = 1;
 
-let barHeight = 15;
-let barWidth = 120;
-let barX = (playBox.width - barWidth) / 2;
+const BAR_HEIGHT = 10;
+const BAR_WIDTH = 150;
+let barX = (playBox.width - BAR_WIDTH) / 2;
 
 let rightKeyPressed = false;
 let leftKeyPressed = false;
@@ -30,7 +30,8 @@ for (let i = 0; i < BRICK_COLS; i++) {
     for (let j = 0; j < BRICK_ROWS; j++) {
         bricks[i][j] = {
             x: 0,
-            y: 0
+            y: 0,
+            hit: 0
         };
     }
 }
@@ -38,14 +39,16 @@ for (let i = 0; i < BRICK_COLS; i++) {
 function renderBricks() {
     for (let i = 0; i < BRICK_COLS; i++) {
         for (let j = 0; j < BRICK_ROWS; j++) {
-            let x = (i * (BRICK_WIDTH + BRICK_MARGIN)) + BRICK_OFFSET_LEFT;
-            let y = (j * (BRICK_HEIGHT + BRICK_MARGIN)) + BRICK_OFFSET_TOP;
-            bricks[i][j] = { x, y };
-            context.beginPath();
-            context.rect(x, y, BRICK_WIDTH, BRICK_HEIGHT);
-            context.fillStyle = 'red'; // '#163D35';
-            context.fill();
-            context.closePath();
+            if (bricks[i][j].hit == 0) {
+                let x = (i * (BRICK_WIDTH + BRICK_MARGIN)) + BRICK_OFFSET_LEFT;
+                let y = (j * (BRICK_HEIGHT + BRICK_MARGIN)) + BRICK_OFFSET_TOP;
+                bricks[i][j] = { x, y, hit: 0 };
+                context.beginPath();
+                context.rect(x, y, BRICK_WIDTH, BRICK_HEIGHT);
+                context.fillStyle = '#163D35';
+                context.fill();
+                context.closePath();
+            }
         }
     }
 }
@@ -65,25 +68,29 @@ function speedUp() {
 
 function renderBar() {
     context.beginPath();
-    context.rect(barX, playBox.height - barHeight, barWidth, barHeight);
+    context.rect(barX, playBox.height - BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);
     context.fillStyle = '#163D35';
     context.fill();
     context.closePath();
 }
 
 function draw() {
-    context.clearRect(0, 0, playBox.width, playBox.height)
+    context.clearRect(0, 0, playBox.width, playBox.height);
     renderBall();
     renderBar();
-    if (x + dx > playBox.width - radius || x + dx < radius) {
+    detectCollision();
+    renderBricks();
+    
+    if (x + dx > playBox.width - RADIUS || x + dx < RADIUS) {
         dx = -dx;
     }
-    if (y + dy < radius) {
+    if (y + dy < RADIUS) {
         dy = -dy;
-    } else if (y + dy > playBox.height - radius) {
-
-        if (x > barX && x < barX + barWidth) {
-            dy = -dy;
+    } else if (y + dy > playBox.height - RADIUS) {
+        if (x > barX && x < barX + BAR_WIDTH) {
+            if(y = y - BAR_HEIGHT) {
+                dy = -dy;
+            }
         } else {
             endGame();
         }
@@ -92,7 +99,7 @@ function draw() {
     x += dx;
     y += dy;
 
-    if (rightKeyPressed && barX < playBox.width - barWidth) {
+    if (rightKeyPressed && barX < playBox.width - BAR_WIDTH) {
         barX += 10;
     }
 
@@ -120,10 +127,26 @@ function keyUpHandler(e) {
     }
 }
 
-let drawInterval = setInterval(draw, 10);
-setInterval(speedUp, 5000);
+function detectCollision() {
+    console.log('#');
+    for (let i = 0; i < BRICK_COLS; i++) {
+        for (let j = 0; j < BRICK_ROWS; j++) {
+            let b = bricks[i][j];
+            console.log(b);
+            if (b.hit == 0) {
+                if (x > b.x && x < b.x + BRICK_WIDTH && y > b.y && y < b.y + BRICK_HEIGHT) {
+                    dy = -dy
+                    b.hit = 1;
+                }
+            }
+        }
+    }
+}
 
 renderBricks();
+
+let drawInterval = setInterval(draw, 10);
+setInterval(speedUp, 5000);
 
 function endGame() {
     alert("GAME OVER");
