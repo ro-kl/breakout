@@ -25,7 +25,7 @@ const BRICK_OFFSET_TOP = 50;
 const BRICK_OFFSET_LEFT = 30;
 const COUNT_BRICKS = BRICK_ROWS * BRICK_COLS;
 
-const INSTRUCTION_MESSAGE = `Instructions\n\nUse the arrow keys or the mouse to move the bar.\nThe speed increase every 5 seconds.\nPress 's' to slow down the ball, 'p' to pause the game.\nThe game ends if you hit all ${COUNT_BRICKS} bricks.\n\nGood luck :)`;
+const INSTRUCTION_MESSAGE = `Instructions\n\nUse the arrow keys or the mouse to move the bar.\nThe speed increase every 5 seconds.\nPress 's' to slow down the ball, 'p' to pause the game and 'i' for instructions.\nThe game ends if you hit all ${COUNT_BRICKS} bricks.\n\nGood luck :)`;
 const HIGHLIGHT_COLOR= "#497CB3";
 
 let points = 0;
@@ -85,6 +85,11 @@ function speedDown() {
 
 function pauseGame() {
     pause = !pause;
+}
+
+function showInstructions() {
+    console.log('####');
+    alert(INSTRUCTION_MESSAGE);
 }
 
 function renderBar() {
@@ -147,14 +152,12 @@ function keyDownHandler(e) {
         rightKeyPressed = true;
     } else if (e.key == "Left" || e.key == "ArrowLeft") {
         leftKeyPressed = true;
-    }
-    
-    if (e.key == "s" && speed > 1) {
+    } else if (e.key == "s" && speed > 1) {
         speedDown();
-    }
-    
-    if (e.key == "p") {
+    }else if (e.key == "p") {
         pauseGame();
+    } else if (e.key == "i") {
+        showInstructions();
     }
 }
 
@@ -193,12 +196,10 @@ function detectCollision() {
 
 renderBricks();
 
-alert(INSTRUCTION_MESSAGE);
-
 let drawInterval = setInterval(render, 10);
 setInterval(speedUp, 5000);
 
-
+showInstructions();
 
 function gameOver() {
     alert("GAME OVER");
