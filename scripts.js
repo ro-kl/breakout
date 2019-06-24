@@ -28,6 +28,7 @@ const COUNT_BRICKS = BRICK_ROWS * BRICK_COLS;
 const HIGHLIGHT_COLOR= "#497CB3";
 
 let points = 0;
+let speed = 1;
 
 let bricks = [];
 for (let i = 0; i < BRICK_COLS; i++) {
@@ -69,6 +70,7 @@ function renderBall() {
 function speedUp() {
     this.dy = (dy < 0) ? dy-- : dy++;
     this.dx = (dx < 0) ? dx-- : dx++;
+    speed++;
 }
 
 function renderBar() {
@@ -82,7 +84,7 @@ function renderBar() {
 function renderPoints() {
     context.font = "15px Arial";
     context.fillStyle = "#497CB3";
-    context.fillText(`Destroyed: ${points} / ${COUNT_BRICKS}`, 30, 30);
+    context.fillText(`destroyed: ${points} / ${COUNT_BRICKS} | speed: ${speed}`, 30, 30);
 }
 
 function render() {
@@ -122,6 +124,7 @@ function render() {
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 function keyDownHandler(e) {
     if (e.key == "Right" || e.key == "ArrowRight") {
@@ -136,6 +139,13 @@ function keyUpHandler(e) {
         rightKeyPressed = false;
     } else if (e.key == "Left" || e.key == "ArrowLeft") {
         leftKeyPressed = false;
+    }
+}
+
+function mouseMoveHandler(e) {
+    let relativePosition = e.clientX - playBox.offsetLeft;
+    if(relativePosition > BAR_WIDTH / 2 && relativePosition < playBox.width - BAR_WIDTH / 2) {
+        barX = relativePosition - BAR_WIDTH / 2;
     }
 }
 
