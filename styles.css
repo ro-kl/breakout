@@ -4,12 +4,11 @@
 }
 
 body {
-    background: #163D35;
+    background: #497CB3;
 }
 
 canvas {
-    background: #E2EFCD;
+    background: #F1F8FB;
     display: block;
     margin: 50 auto;
 }
-

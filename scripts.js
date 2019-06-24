@@ -5,24 +5,29 @@ let x = playBox.width / 2;
 let y = playBox.height - 30;
 
 const RADIUS = 10;
-
+const BALL_DIRECTION = Math.random() < 0.5;
 let dy = -1;
-let dx = 1;
+let dx = BALL_DIRECTION ? 1 : -1;
 
-const BAR_HEIGHT = 10;
-const BAR_WIDTH = 150;
+const BAR_HEIGHT = 15;
+const BAR_WIDTH = 200;
 let barX = (playBox.width - BAR_WIDTH) / 2;
 
 let rightKeyPressed = false;
 let leftKeyPressed = false;
 
 const BRICK_ROWS = 5;
-const BRICK_COLS = 8;
+const BRICK_COLS = 10;
 const BRICK_WIDTH = 80;
 const BRICK_HEIGHT = 20;
 const BRICK_MARGIN = 10;
-const BRICK_OFFSET_TOP = 30;
+const BRICK_OFFSET_TOP = 50;
 const BRICK_OFFSET_LEFT = 30;
+const COUNT_BRICKS = BRICK_ROWS * BRICK_COLS;
+
+const HIGHLIGHT_COLOR= "#497CB3";
+
+let points = 0;
 
 let bricks = [];
 for (let i = 0; i < BRICK_COLS; i++) {
@@ -45,7 +50,7 @@ function renderBricks() {
                 bricks[i][j] = { x, y, hit: 0 };
                 context.beginPath();
                 context.rect(x, y, BRICK_WIDTH, BRICK_HEIGHT);
-                context.fillStyle = '#163D35';
+                context.fillStyle = HIGHLIGHT_COLOR;
                 context.fill();
                 context.closePath();
             }
@@ -56,7 +61,7 @@ function renderBricks() {
 function renderBall() {
     context.beginPath();
     context.arc(x, y, 10, 0, Math.PI * 2);
-    context.fillStyle = "#163D35";
+    context.fillStyle = HIGHLIGHT_COLOR;
     context.fill();
     context.closePath();
 }
@@ -69,17 +74,24 @@ function speedUp() {
 function renderBar() {
     context.beginPath();
     context.rect(barX, playBox.height - BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);
-    context.fillStyle = '#163D35';
+    context.fillStyle = HIGHLIGHT_COLOR;
     context.fill();
     context.closePath();
 }
 
-function draw() {
+function renderPoints() {
+    context.font = "15px Arial";
+    context.fillStyle = "#497CB3";
+    context.fillText(`Destroyed: ${points} / ${COUNT_BRICKS}`, 30, 30);
+}
+
+function render() {
     context.clearRect(0, 0, playBox.width, playBox.height);
     renderBall();
     renderBar();
     detectCollision();
     renderBricks();
+    renderPoints();
     
     if (x + dx > playBox.width - RADIUS || x + dx < RADIUS) {
         dx = -dx;
@@ -92,7 +104,7 @@ function draw() {
                 dy = -dy;
             }
         } else {
-            endGame();
+            gameOver();
         }
     }
 
@@ -135,6 +147,10 @@ function detectCollision() {
                 if (x > b.x && x < b.x + BRICK_WIDTH && y > b.y && y < b.y + BRICK_HEIGHT) {
                     dy = -dy
                     b.hit = 1;
+                    points++
+                    if(points == COUNT_BRICKS) {
+                        gameWon();
+                    }
                 }
             }
         }
@@ -143,11 +159,17 @@ function detectCollision() {
 
 renderBricks();
 
-let drawInterval = setInterval(draw, 10);
+let drawInterval = setInterval(render, 10);
 setInterval(speedUp, 5000);
 
-function endGame() {
+function gameOver() {
     alert("GAME OVER");
+    document.location.reload();
+    clearInterval(drawInterval);
+}
+
+function gameWon() {
+    alert("WON");
     document.location.reload();
     clearInterval(drawInterval);
 }
