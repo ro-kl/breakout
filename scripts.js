@@ -25,6 +25,7 @@ const BRICK_OFFSET_TOP = 50;
 const BRICK_OFFSET_LEFT = 30;
 const COUNT_BRICKS = BRICK_ROWS * BRICK_COLS;
 
+const INSTRUCTION_MESSAGE = `Instructions\n\nUse the arrow keys or the mouse to move the bar.\nPress 'e' to slow down the ball.\nThe game ends if you hit all ${COUNT_BRICKS} bricks.\n\nGood luck :)`;
 const HIGHLIGHT_COLOR= "#497CB3";
 
 let points = 0;
@@ -73,6 +74,12 @@ function speedUp() {
     speed++;
 }
 
+function speedDown() {
+    this.dy = (dy < 0) ? dy++ : dy--;
+    this.dx = (dx < 0) ? dx++ : dx--;
+    speed--;
+}
+
 function renderBar() {
     context.beginPath();
     context.rect(barX, playBox.height - BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);
@@ -84,7 +91,7 @@ function renderBar() {
 function renderPoints() {
     context.font = "15px Arial";
     context.fillStyle = "#497CB3";
-    context.fillText(`destroyed: ${points} / ${COUNT_BRICKS} | speed: ${speed}`, 30, 30);
+    context.fillText(`destroyed: ${points} / ${COUNT_BRICKS}   |   speed: ${speed}`, 30, 30);
 }
 
 function render() {
@@ -132,6 +139,10 @@ function keyDownHandler(e) {
     } else if (e.key == "Left" || e.key == "ArrowLeft") {
         leftKeyPressed = true;
     }
+    
+    if (e.key == "e" && speed > 1) {
+        speedDown();
+    }
 }
 
 function keyUpHandler(e) {
@@ -169,6 +180,7 @@ function detectCollision() {
 
 renderBricks();
 
+alert(INSTRUCTION_MESSAGE);
 let drawInterval = setInterval(render, 10);
 setInterval(speedUp, 5000);
 
