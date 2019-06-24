@@ -25,11 +25,12 @@ const BRICK_OFFSET_TOP = 50;
 const BRICK_OFFSET_LEFT = 30;
 const COUNT_BRICKS = BRICK_ROWS * BRICK_COLS;
 
-const INSTRUCTION_MESSAGE = `Instructions\n\nUse the arrow keys or the mouse to move the bar.\nPress 'e' to slow down the ball.\nThe game ends if you hit all ${COUNT_BRICKS} bricks.\n\nGood luck :)`;
+const INSTRUCTION_MESSAGE = `Instructions\n\nUse the arrow keys or the mouse to move the bar.\nThe speed increase every 5 seconds.\nPress 's' to slow down the ball, 'p' to pause the game.\nThe game ends if you hit all ${COUNT_BRICKS} bricks.\n\nGood luck :)`;
 const HIGHLIGHT_COLOR= "#497CB3";
 
 let points = 0;
 let speed = 1;
+let pause = false;
 
 let bricks = [];
 for (let i = 0; i < BRICK_COLS; i++) {
@@ -69,15 +70,21 @@ function renderBall() {
 }
 
 function speedUp() {
-    this.dy = (dy < 0) ? dy-- : dy++;
-    this.dx = (dx < 0) ? dx-- : dx++;
-    speed++;
+    if(!pause){
+        this.dy = (dy < 0) ? dy-- : dy++;
+        this.dx = (dx < 0) ? dx-- : dx++;
+        speed++;
+    }
 }
 
 function speedDown() {
     this.dy = (dy < 0) ? dy++ : dy--;
     this.dx = (dx < 0) ? dx++ : dx--;
     speed--;
+}
+
+function pauseGame() {
+    pause = !pause;
 }
 
 function renderBar() {
@@ -95,37 +102,39 @@ function renderPoints() {
 }
 
 function render() {
-    context.clearRect(0, 0, playBox.width, playBox.height);
-    renderBall();
-    renderBar();
-    detectCollision();
-    renderBricks();
-    renderPoints();
-    
-    if (x + dx > playBox.width - RADIUS || x + dx < RADIUS) {
-        dx = -dx;
-    }
-    if (y + dy < RADIUS) {
-        dy = -dy;
-    } else if (y + dy > playBox.height - RADIUS) {
-        if (x > barX && x < barX + BAR_WIDTH) {
-            if(y = y - BAR_HEIGHT) {
-                dy = -dy;
-            }
-        } else {
-            gameOver();
+    if(!pause) {
+        context.clearRect(0, 0, playBox.width, playBox.height);
+        renderBall();
+        renderBar();
+        detectCollision();
+        renderBricks();
+        renderPoints();
+        
+        if (x + dx > playBox.width - RADIUS || x + dx < RADIUS) {
+            dx = -dx;
         }
-    }
-
-    x += dx;
-    y += dy;
-
-    if (rightKeyPressed && barX < playBox.width - BAR_WIDTH) {
-        barX += 10;
-    }
-
-    if (leftKeyPressed && barX > 0) {
-        barX -= 10;
+        if (y + dy < RADIUS) {
+            dy = -dy;
+        } else if (y + dy > playBox.height - RADIUS) {
+            if (x > barX && x < barX + BAR_WIDTH) {
+                if(y = y - BAR_HEIGHT) {
+                    dy = -dy;
+                }
+            } else {
+                gameOver();
+            }
+        }
+    
+        x += dx;
+        y += dy;
+    
+        if (rightKeyPressed && barX < playBox.width - BAR_WIDTH) {
+            barX += 10;
+        }
+    
+        if (leftKeyPressed && barX > 0) {
+            barX -= 10;
+        }
     }
 }
 
@@ -140,8 +149,12 @@ function keyDownHandler(e) {
         leftKeyPressed = true;
     }
     
-    if (e.key == "e" && speed > 1) {
+    if (e.key == "s" && speed > 1) {
         speedDown();
+    }
+    
+    if (e.key == "p") {
+        pauseGame();
     }
 }
 
@@ -181,8 +194,11 @@ function detectCollision() {
 renderBricks();
 
 alert(INSTRUCTION_MESSAGE);
+
 let drawInterval = setInterval(render, 10);
 setInterval(speedUp, 5000);
+
+
 
 function gameOver() {
     alert("GAME OVER");
