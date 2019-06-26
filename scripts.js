@@ -6,6 +6,7 @@ let y = playBox.height - 30;
 
 const RADIUS = 10;
 const BALL_DIRECTION = Math.random() < 0.5;
+
 let dy = -1;
 let dx = BALL_DIRECTION ? 1 : -1;
 
@@ -44,7 +45,7 @@ for (let i = 0; i < BRICK_COLS; i++) {
     }
 }
 
-function renderBricks() {
+const renderBricks = () => {
     for (let i = 0; i < BRICK_COLS; i++) {
         for (let j = 0; j < BRICK_ROWS; j++) {
             if (bricks[i][j].hit == 0) {
@@ -61,7 +62,7 @@ function renderBricks() {
     }
 }
 
-function renderBall() {
+const renderBall = () => {
     context.beginPath();
     context.arc(x, y, 10, 0, Math.PI * 2);
     context.fillStyle = HIGHLIGHT_COLOR;
@@ -69,30 +70,29 @@ function renderBall() {
     context.closePath();
 }
 
-function speedUp() {
+const speedUp = () => {
     if(!pause){
-        this.dy = (dy < 0) ? dy-- : dy++;
-        this.dx = (dx < 0) ? dx-- : dx++;
+        dy = (dy < 0) ? dy-- : dy++;
+        dx = (dx < 0) ? dx-- : dx++;
         speed++;
     }
 }
 
-function speedDown() {
-    this.dy = (dy < 0) ? dy++ : dy--;
-    this.dx = (dx < 0) ? dx++ : dx--;
+const speedDown = () => {
+    dy = (dy < 0) ? dy++ : dy--;
+    dx = (dx < 0) ? dx++ : dx--;
     speed--;
 }
 
-function pauseGame() {
+const pauseGame = () => {
     pause = !pause;
 }
 
-function showInstructions() {
-    console.log('####');
+const showInstructions = () => {
     alert(INSTRUCTION_MESSAGE);
 }
 
-function renderBar() {
+const renderBar= () => {
     context.beginPath();
     context.rect(barX, playBox.height - BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);
     context.fillStyle = HIGHLIGHT_COLOR;
@@ -100,13 +100,13 @@ function renderBar() {
     context.closePath();
 }
 
-function renderPoints() {
+const renderPoints= () => {
     context.font = "15px Arial";
     context.fillStyle = "#497CB3";
     context.fillText(`destroyed: ${points} / ${COUNT_BRICKS}   |   speed: ${speed}`, 30, 30);
 }
 
-function render() {
+const render = () => {
     if(!pause) {
         context.clearRect(0, 0, playBox.width, playBox.height);
         renderBall();
@@ -143,11 +143,9 @@ function render() {
     }
 }
 
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
-document.addEventListener("mousemove", mouseMoveHandler, false);
 
-function keyDownHandler(e) {
+
+const keyDownHandler = (e) => {
     if (e.key == "Right" || e.key == "ArrowRight") {
         rightKeyPressed = true;
     } else if (e.key == "Left" || e.key == "ArrowLeft") {
@@ -161,7 +159,7 @@ function keyDownHandler(e) {
     }
 }
 
-function keyUpHandler(e) {
+const keyUpHandler = (e) => {
     if (e.key == "Right" || e.key == "ArrowRight") {
         rightKeyPressed = false;
     } else if (e.key == "Left" || e.key == "ArrowLeft") {
@@ -169,14 +167,14 @@ function keyUpHandler(e) {
     }
 }
 
-function mouseMoveHandler(e) {
+const mouseMoveHandler = (e) => {
     let relativePosition = e.clientX - playBox.offsetLeft;
     if(relativePosition > BAR_WIDTH / 2 && relativePosition < playBox.width - BAR_WIDTH / 2) {
         barX = relativePosition - BAR_WIDTH / 2;
     }
 }
 
-function detectCollision() {
+ const detectCollision = () => {
     for (let i = 0; i < BRICK_COLS; i++) {
         for (let j = 0; j < BRICK_ROWS; j++) {
             let b = bricks[i][j];
@@ -201,14 +199,18 @@ setInterval(speedUp, 5000);
 
 showInstructions();
 
-function gameOver() {
+const gameOver = () => {
     alert("GAME OVER");
     document.location.reload();
     clearInterval(drawInterval);
 }
 
-function gameWon() {
+const gameWon = () => {
     alert("WON");
     document.location.reload();
     clearInterval(drawInterval);
 }
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
